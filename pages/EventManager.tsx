@@ -1,16 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit, Sparkles, Save, MapPin, PenTool, BookOpen, Eye, Palette, Image, Copy, Upload, ArrowDownUp, AlignLeft, AlignCenter, AlignJustify, AlignRight, ArrowRightToLine, ArrowLeftToLine } from 'lucide-react';
+import { Plus, Trash2, Edit, Save, MapPin, PenTool, BookOpen, Eye, Palette, Image, Copy, Upload, ArrowDownUp, AlignLeft, AlignCenter, AlignJustify, AlignRight, ArrowRightToLine, ArrowLeftToLine, Type } from 'lucide-react';
 import { Event, Participant, CertificateTemplate } from '../types';
 import { Button } from '../components/Button';
-import { generateCertificateText } from '../services/geminiService';
 import { generatePDF } from '../utils/pdfGenerator';
 
 export default function EventManager() {
   const [events, setEvents] = useState<Event[]>([]);
   const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoadingAi, setIsLoadingAi] = useState(false);
   const [currentEvent, setCurrentEvent] = useState<Partial<Event>>({
     title: '',
     description: '',
@@ -26,19 +24,24 @@ export default function EventManager() {
     programContent: '',
     // Front Defaults
     textY: 95,
+    textSize: 16,
     marginLeft: 30,
     marginRight: 30,
     textAlign: 'justify',
     textColor: '#000000',
     // Back Defaults
     programTextY: 40,
+    programTextSize: 10,
     programMarginLeft: 20,
     programMarginRight: 20,
     programTextAlign: 'left',
     programTextColor: '#000000',
     // Signature Defaults
     signatureTextY: 170,
-    signatureTextColor: '#000000'
+    signatureTextSize: 11,
+    signatureTextColor: '#000000',
+    signatureMarginLeft: 0,
+    signatureMarginRight: 0
   });
 
   useEffect(() => {
@@ -72,9 +75,10 @@ export default function EventManager() {
       title: '', description: '', organizer: '', hours: 4, startDate: '', endDate: '', 
       location: '', signatureName: '', signatureRole: '', signatureImage: '',
       templateText: '', programContent: '', backgroundImage: '', backImage: '',
-      textY: 95, marginLeft: 30, marginRight: 30, textAlign: 'justify', textColor: '#000000',
-      programTextY: 40, programMarginLeft: 20, programMarginRight: 20, programTextAlign: 'left', programTextColor: '#000000',
-      signatureTextY: 170, signatureTextColor: '#000000'
+      textY: 95, textSize: 16, marginLeft: 30, marginRight: 30, textAlign: 'justify', textColor: '#000000',
+      programTextY: 40, programTextSize: 10, programMarginLeft: 20, programMarginRight: 20, programTextAlign: 'left', programTextColor: '#000000',
+      signatureTextY: 170, signatureTextSize: 11, signatureTextColor: '#000000',
+      signatureMarginLeft: 0, signatureMarginRight: 0
     });
   };
 
@@ -105,32 +109,26 @@ export default function EventManager() {
         backImage: template.backImage,
         // Front
         textY: template.textY || 95,
+        textSize: template.textSize || 16,
         marginLeft: template.marginLeft || 30,
         marginRight: template.marginRight || 30,
         textAlign: template.textAlign || 'justify',
         textColor: template.textColor || '#000000',
         // Back
         programTextY: template.programTextY || 40,
+        programTextSize: template.programTextSize || 10,
         programMarginLeft: template.programMarginLeft || 20,
         programMarginRight: template.programMarginRight || 20,
         programTextAlign: template.programTextAlign || 'left',
         programTextColor: template.programTextColor || '#000000',
         // Signature
         signatureTextY: template.signatureTextY || 170,
-        signatureTextColor: template.signatureTextColor || '#000000'
+        signatureTextSize: template.signatureTextSize || 11,
+        signatureTextColor: template.signatureTextColor || '#000000',
+        signatureMarginLeft: template.signatureMarginLeft || 0,
+        signatureMarginRight: template.signatureMarginRight || 0
       }));
     }
-  };
-
-  const handleGenerateTemplate = async () => {
-    if (!currentEvent.title || !currentEvent.organizer) {
-      alert("Preencha o título e o organizador primeiro.");
-      return;
-    }
-    setIsLoadingAi(true);
-    const text = await generateCertificateText(currentEvent.title, currentEvent.hours || 4, currentEvent.organizer);
-    setCurrentEvent(prev => ({ ...prev, templateText: text }));
-    setIsLoadingAi(false);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'front' | 'back' | 'signature') => {
@@ -351,7 +349,40 @@ export default function EventManager() {
                         onChange={(e) => setCurrentEvent({...currentEvent, signatureTextY: Number(e.target.value)})}
                       />
                    </div>
+
+                    <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
+                      <Type size={16} className="text-slate-500"/>
+                      <span className="text-xs text-slate-600">Tam:</span>
+                      <input 
+                        type="number" 
+                        className="w-14 p-1 text-sm border rounded bg-slate-50"
+                        value={currentEvent.signatureTextSize || 11}
+                        onChange={(e) => setCurrentEvent({...currentEvent, signatureTextSize: Number(e.target.value)})}
+                      />
+                   </div>
+
+                   <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
+                      <ArrowRightToLine size={16} className="text-slate-500"/>
+                      <span className="text-xs text-slate-600">Esq:</span>
+                      <input 
+                        type="number" 
+                        className="w-14 p-1 text-sm border rounded bg-slate-50"
+                        value={currentEvent.signatureMarginLeft || 0}
+                        onChange={(e) => setCurrentEvent({...currentEvent, signatureMarginLeft: Number(e.target.value)})}
+                      />
+                   </div>
                    <div className="flex items-center gap-2">
+                      <ArrowLeftToLine size={16} className="text-slate-500"/>
+                      <span className="text-xs text-slate-600">Dir:</span>
+                      <input 
+                        type="number" 
+                        className="w-14 p-1 text-sm border rounded bg-slate-50"
+                        value={currentEvent.signatureMarginRight || 0}
+                        onChange={(e) => setCurrentEvent({...currentEvent, signatureMarginRight: Number(e.target.value)})}
+                      />
+                   </div>
+
+                   <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
                       <Palette size={16} className="text-slate-500"/>
                       <span className="text-xs text-slate-600">Cor Texto:</span>
                       <input 
@@ -386,11 +417,8 @@ export default function EventManager() {
 
             {/* Front Content Section */}
             <div className="border-t pt-6">
-              <div className="flex justify-between items-end mb-2">
+              <div className="mb-2">
                  <label className="block text-sm font-medium text-slate-700">Texto Frente do Certificado</label>
-                 <Button type="button" size="sm" variant="secondary" onClick={handleGenerateTemplate} isLoading={isLoadingAi}>
-                    <Sparkles size={16} className="mr-2 text-purple-600" /> Gerar Texto com IA
-                  </Button>
               </div>
 
               {/* Text Configuration Toolbar */}
@@ -404,6 +432,18 @@ export default function EventManager() {
                       className="w-14 p-1 text-sm border rounded"
                       value={currentEvent.textY || 95}
                       onChange={(e) => setCurrentEvent({...currentEvent, textY: Number(e.target.value)})}
+                    />
+                 </div>
+
+                 {/* Text Size */}
+                 <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
+                    <Type size={16} className="text-slate-500"/>
+                    <span className="text-xs text-slate-600">Tam:</span>
+                    <input 
+                      type="number" 
+                      className="w-14 p-1 text-sm border rounded"
+                      value={currentEvent.textSize || 16}
+                      onChange={(e) => setCurrentEvent({...currentEvent, textSize: Number(e.target.value)})}
                     />
                  </div>
 
@@ -484,6 +524,17 @@ export default function EventManager() {
                       className="w-14 p-1 text-sm border rounded"
                       value={currentEvent.programTextY || 40}
                       onChange={(e) => setCurrentEvent({...currentEvent, programTextY: Number(e.target.value)})}
+                    />
+                 </div>
+
+                 <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
+                    <Type size={16} className="text-slate-500"/>
+                    <span className="text-xs text-slate-600">Tam:</span>
+                    <input 
+                      type="number" 
+                      className="w-14 p-1 text-sm border rounded"
+                      value={currentEvent.programTextSize || 10}
+                      onChange={(e) => setCurrentEvent({...currentEvent, programTextSize: Number(e.target.value)})}
                     />
                  </div>
 

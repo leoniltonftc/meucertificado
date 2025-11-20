@@ -158,7 +158,7 @@ export default function Home({ user }: HomeProps) {
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-12 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <div className="flex items-center gap-2 text-white font-bold text-lg mb-4">
               <FileBadge className="w-6 h-6" /> CertificadoPro AI
@@ -174,10 +174,6 @@ export default function Home({ user }: HomeProps) {
               <li><Link to="/login" className="hover:text-white">Área do Aluno</Link></li>
               <li><Link to="/validate" className="hover:text-white">Validação</Link></li>
             </ul>
-          </div>
-          <div>
-             <h4 className="text-white font-bold mb-4">Contato</h4>
-             <p className="text-sm">suporte@certificadopro.com.br</p>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 text-center text-xs">

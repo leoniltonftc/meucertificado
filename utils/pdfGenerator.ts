@@ -46,7 +46,9 @@ export const generatePDF = (
 
   // 2. Content Text (Dynamic Overlay)
   doc.setFont("times", "normal");
-  doc.setFontSize(16);
+  
+  // Text Size
+  doc.setFontSize(event.textSize ? Number(event.textSize) : 16);
   
   // Use custom color if available
   if (event.textColor) {
@@ -116,7 +118,13 @@ export const generatePDF = (
 
   // 4. Signature Section
   const sigY = event.signatureTextY ? Number(event.signatureTextY) : 170;
+  const sigMarginLeft = event.signatureMarginLeft ? Number(event.signatureMarginLeft) : 0;
+  const sigMarginRight = event.signatureMarginRight ? Number(event.signatureMarginRight) : 0;
   
+  // Calculate center based on margins. If margins are 0, it defaults to width/2.
+  const availableSigWidth = width - sigMarginLeft - sigMarginRight;
+  const sigCenterX = sigMarginLeft + (availableSigWidth / 2);
+
   // Signature Color
   if (event.signatureTextColor) {
     doc.setTextColor(event.signatureTextColor);
@@ -129,19 +137,20 @@ export const generatePDF = (
         try {
             const sigImgWidth = 50; 
             const sigImgHeight = 20;
-            doc.addImage(event.signatureImage, 'PNG', (width / 2) - (sigImgWidth / 2), sigY - 18, sigImgWidth, sigImgHeight);
+            // Center image relative to the calculated sigCenterX
+            doc.addImage(event.signatureImage, 'PNG', sigCenterX - (sigImgWidth / 2), sigY - 18, sigImgWidth, sigImgHeight);
         } catch (e) {
             console.error("Error rendering signature image", e);
         }
     }
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text(event.signatureName.toUpperCase(), width/2, sigY, { align: "center" });
+    doc.setFontSize(event.signatureTextSize ? Number(event.signatureTextSize) : 11);
+    doc.text(event.signatureName.toUpperCase(), sigCenterX, sigY, { align: "center" });
     
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.text(event.signatureRole.toUpperCase(), width/2, sigY + 5, { align: "center" });
+    doc.setFontSize((event.signatureTextSize ? Number(event.signatureTextSize) : 11) - 2); // Role slightly smaller
+    doc.text(event.signatureRole.toUpperCase(), sigCenterX, sigY + 5, { align: "center" });
   }
 
   // ==========================================
@@ -180,7 +189,8 @@ export const generatePDF = (
           const progMaxWidth = width - progMarginLeft - progMarginRight;
           const progAlign = event.programTextAlign || 'left';
           
-          doc.setFontSize(10);
+          // Set Size
+          doc.setFontSize(event.programTextSize ? Number(event.programTextSize) : 10);
           doc.setFont("helvetica", "normal");
           doc.setTextColor(event.programTextColor || '#000000');
 

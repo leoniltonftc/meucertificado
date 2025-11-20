@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit, Save, Image, ArrowDownUp, AlignCenter, AlignLeft, AlignJustify, AlignRight, Palette, ArrowRightToLine, ArrowLeftToLine } from 'lucide-react';
+import { Plus, Trash2, Edit, Save, Image, ArrowDownUp, AlignCenter, AlignLeft, AlignJustify, AlignRight, Palette, ArrowRightToLine, ArrowLeftToLine, Type } from 'lucide-react';
 import { CertificateTemplate } from '../types';
 import { Button } from '../components/Button';
 
@@ -15,19 +15,24 @@ export default function TemplateManager() {
     backImage: '',
     // Front Defaults
     textY: 95,
+    textSize: 16,
     marginLeft: 30,
     marginRight: 30,
     textAlign: 'justify',
     textColor: '#000000',
     // Back Defaults
     programTextY: 40,
+    programTextSize: 10,
     programMarginLeft: 20,
     programMarginRight: 20,
     programTextAlign: 'left',
     programTextColor: '#000000',
     // Signature Defaults
     signatureTextY: 170,
-    signatureTextColor: '#000000'
+    signatureTextSize: 11,
+    signatureTextColor: '#000000',
+    signatureMarginLeft: 0,
+    signatureMarginRight: 0
   });
 
   useEffect(() => {
@@ -42,17 +47,22 @@ export default function TemplateManager() {
         frontText: 'Certificamos que [NOME_DO_PARTICIPANTE], CPF: [CPF] participou de 100,00% do evento [NOME_EVENTO].',
         backText: 'CONTEÚDO PROGRAMÁTICO PADRÃO',
         textY: 95,
+        textSize: 16,
         marginLeft: 30,
         marginRight: 30,
         textAlign: 'justify' as const,
         textColor: '#000000',
         programTextY: 40,
+        programTextSize: 10,
         programMarginLeft: 20,
         programMarginRight: 20,
         programTextAlign: 'left' as const,
         programTextColor: '#000000',
         signatureTextY: 170,
-        signatureTextColor: '#000000'
+        signatureTextSize: 11,
+        signatureTextColor: '#000000',
+        signatureMarginLeft: 0,
+        signatureMarginRight: 0
       };
       setTemplates([defaultTemplate]);
       localStorage.setItem('certificate_templates', JSON.stringify([defaultTemplate]));
@@ -85,17 +95,22 @@ export default function TemplateManager() {
       backgroundImage: '',
       backImage: '',
       textY: 95,
+      textSize: 16,
       marginLeft: 30,
       marginRight: 30,
       textAlign: 'justify',
       textColor: '#000000',
       programTextY: 40,
+      programTextSize: 10,
       programMarginLeft: 20,
       programMarginRight: 20,
       programTextAlign: 'left',
       programTextColor: '#000000',
       signatureTextY: 170,
-      signatureTextColor: '#000000'
+      signatureTextSize: 11,
+      signatureTextColor: '#000000',
+      signatureMarginLeft: 0,
+      signatureMarginRight: 0
     });
   };
 
@@ -228,6 +243,18 @@ export default function TemplateManager() {
                     />
                  </div>
 
+                  {/* Text Size */}
+                 <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
+                    <Type size={16} className="text-slate-500"/>
+                    <span className="text-xs text-slate-600">Tam:</span>
+                    <input 
+                      type="number" 
+                      className="w-14 p-1 text-sm border rounded"
+                      value={currentTemplate.textSize || 16}
+                      onChange={(e) => setCurrentTemplate({...currentTemplate, textSize: Number(e.target.value)})}
+                    />
+                 </div>
+
                  {/* Margins */}
                  <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
                     <ArrowRightToLine size={16} className="text-slate-500"/>
@@ -305,6 +332,17 @@ export default function TemplateManager() {
                  </div>
 
                  <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
+                    <Type size={16} className="text-slate-500"/>
+                    <span className="text-xs text-slate-600">Tam:</span>
+                    <input 
+                      type="number" 
+                      className="w-14 p-1 text-sm border rounded"
+                      value={currentTemplate.programTextSize || 10}
+                      onChange={(e) => setCurrentTemplate({...currentTemplate, programTextSize: Number(e.target.value)})}
+                    />
+                 </div>
+
+                 <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
                     <ArrowRightToLine size={16} className="text-slate-500"/>
                     <span className="text-xs text-slate-600">Esq:</span>
                     <input 
@@ -374,7 +412,39 @@ export default function TemplateManager() {
                       />
                    </div>
 
+                   <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
+                      <Type size={16} className="text-slate-500"/>
+                      <span className="text-xs text-slate-600">Tam:</span>
+                      <input 
+                        type="number" 
+                        className="w-14 p-1 text-sm border rounded"
+                        value={currentTemplate.signatureTextSize || 11}
+                        onChange={(e) => setCurrentTemplate({...currentTemplate, signatureTextSize: Number(e.target.value)})}
+                      />
+                   </div>
+
+                   <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
+                      <ArrowRightToLine size={16} className="text-slate-500"/>
+                      <span className="text-xs text-slate-600">Esq:</span>
+                      <input 
+                        type="number" 
+                        className="w-14 p-1 text-sm border rounded bg-white"
+                        value={currentTemplate.signatureMarginLeft || 0}
+                        onChange={(e) => setCurrentTemplate({...currentTemplate, signatureMarginLeft: Number(e.target.value)})}
+                      />
+                   </div>
                    <div className="flex items-center gap-2">
+                      <ArrowLeftToLine size={16} className="text-slate-500"/>
+                      <span className="text-xs text-slate-600">Dir:</span>
+                      <input 
+                        type="number" 
+                        className="w-14 p-1 text-sm border rounded bg-white"
+                        value={currentTemplate.signatureMarginRight || 0}
+                        onChange={(e) => setCurrentTemplate({...currentTemplate, signatureMarginRight: Number(e.target.value)})}
+                      />
+                   </div>
+
+                   <div className="flex items-center gap-2 border-l border-slate-300 pl-4">
                       <Palette size={16} className="text-slate-500"/>
                       <span className="text-xs text-slate-600">Cor Texto:</span>
                       <input 

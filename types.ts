@@ -15,6 +15,7 @@ export interface CertificateTemplate {
   
   // Front Text Styling Configuration
   textY?: number; // Vertical Position in mm
+  textSize?: number; // Font Size
   textAlign?: 'left' | 'center' | 'right' | 'justify';
   textColor?: string; // Hex Color
   marginLeft?: number;
@@ -22,6 +23,7 @@ export interface CertificateTemplate {
 
   // Back Text Styling Configuration
   programTextY?: number;
+  programTextSize?: number;
   programTextAlign?: 'left' | 'center' | 'right' | 'justify';
   programTextColor?: string;
   programMarginLeft?: number;
@@ -29,7 +31,10 @@ export interface CertificateTemplate {
 
   // Signature Styling
   signatureTextY?: number;
+  signatureTextSize?: number;
   signatureTextColor?: string;
+  signatureMarginLeft?: number;
+  signatureMarginRight?: number;
 }
 
 export interface Event {
@@ -53,6 +58,7 @@ export interface Event {
   
   // Front Text Styling Override
   textY?: number;
+  textSize?: number;
   textAlign?: 'left' | 'center' | 'right' | 'justify';
   textColor?: string;
   marginLeft?: number;
@@ -60,6 +66,7 @@ export interface Event {
 
   // Back Text Styling Override
   programTextY?: number;
+  programTextSize?: number;
   programTextAlign?: 'left' | 'center' | 'right' | 'justify';
   programTextColor?: string;
   programMarginLeft?: number;
@@ -67,7 +74,10 @@ export interface Event {
 
   // Signature Styling Override
   signatureTextY?: number;
+  signatureTextSize?: number;
   signatureTextColor?: string;
+  signatureMarginLeft?: number;
+  signatureMarginRight?: number;
   
   status: 'draft' | 'active' | 'completed';
 }

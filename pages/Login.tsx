@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { UserRole, User } from '../types';
+import { UserRole, User, Participant } from '../types';
 import { Button } from '../components/Button';
-import { ShieldCheck, UserCircle, LayoutDashboard, ArrowRight, Lock, Mail, AlertCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShieldCheck, UserCircle, LayoutDashboard, ArrowRight, Lock, Mail, AlertCircle, ArrowLeft } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface LoginProps {
   onLogin: (user: User) => void;
@@ -16,7 +16,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [loginMode, setLoginMode] = useState<'SELECT' | 'CPF' | 'ADMIN'>('SELECT');
   const [cpf, setCpf] = useState('');
   
-  // Estados Admin
+  // Estados Admin & Erros
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -37,19 +37,41 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     }
   }, []);
 
+  const clearErrors = () => {
+    setError('');
+  };
+
   // Login do Participante (CPF)
   const handleCpfLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
     const cleanCpf = cpf.replace(/\D/g, '');
     
     if (cleanCpf.length < 11) {
-      alert("Por favor, digite um CPF válido.");
+      setError("Por favor, digite um CPF válido.");
       return;
     }
 
+    // Verificar se existem certificados emitidos para este CPF
+    const allParticipants: Participant[] = JSON.parse(localStorage.getItem('participants') || '[]');
+    
+    const hasCertificate = allParticipants.some(p => {
+      const pCpfClean = (p.cpf || '').replace(/\D/g, '');
+      // Deve ter o mesmo CPF e ter um ID de certificado gerado
+      return pCpfClean === cleanCpf && p.certificateId;
+    });
+
+    if (!hasCertificate) {
+      setError("Nenhum certificado encontrado para este CPF. Verifique o número ou aguarde a emissão pelo organizador.");
+      return;
+    }
+
+    // Se passou, buscar o nome do participante para a sessão (pega o primeiro encontrado)
+    const participantData = allParticipants.find(p => (p.cpf || '').replace(/\D/g, '') === cleanCpf);
+
     onLogin({
       id: cleanCpf,
-      name: 'Participante',
+      name: participantData?.name || 'Participante',
       cpf: cleanCpf,
       role: UserRole.PARTICIPANT
     });
@@ -58,7 +80,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   // Login do Administrador (Email/Senha)
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    clearErrors();
     setIsLoading(true);
 
     setTimeout(() => {
@@ -95,6 +117,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       {/* Background Decoration */}
       <div className="absolute top-0 left-0 w-full h-64 bg-indigo-900 transform -skew-y-3 origin-top-left z-0"></div>
 
+      {/* Back to Home Button */}
+      <div className="absolute top-6 left-6 z-20">
+        <Link to="/" className="flex items-center gap-2 text-indigo-100 hover:text-white transition-colors font-medium bg-indigo-800/50 px-4 py-2 rounded-full backdrop-blur-sm border border-indigo-700/50 hover:bg-indigo-700">
+           <ArrowLeft size={18} /> Voltar para o Início
+        </Link>
+      </div>
+
       <div className="max-w-md w-full bg-white rounded-xl shadow-2xl p-8 space-y-8 relative z-10 animate-fade-in">
         
         {/* Header */}
@@ -111,32 +140,34 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <div className="space-y-4 animate-fade-in">
             <p className="text-center text-sm text-slate-400 uppercase tracking-wider font-semibold mb-6">Escolha seu perfil</p>
             
+            {/* PARTICIPANTE - DESTAQUE */}
             <div 
-              onClick={() => setLoginMode('ADMIN')}
-              className="p-5 border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md hover:bg-indigo-50 cursor-pointer transition-all group flex items-center gap-4"
+              onClick={() => { setLoginMode('CPF'); clearErrors(); }}
+              className="p-6 border-2 border-green-500 bg-green-50 rounded-xl shadow-md cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg group flex items-center gap-4"
+            >
+              <div className="bg-white p-3 rounded-lg text-green-600 shadow-sm">
+                <UserCircle size={28} />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-slate-900">Sou Aluno / Participante</h3>
+                <p className="text-xs text-slate-600 font-medium">Baixar meus certificados (CPF)</p>
+              </div>
+              <ArrowRight className="ml-auto text-green-600" size={24}/>
+            </div>
+
+            {/* ADMIN - SECUNDÁRIO */}
+            <div 
+              onClick={() => { setLoginMode('ADMIN'); clearErrors(); }}
+              className="p-5 border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md hover:bg-indigo-50 cursor-pointer transition-all group flex items-center gap-4 opacity-90 hover:opacity-100"
             >
               <div className="bg-indigo-100 p-3 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors text-indigo-700">
                 <Lock size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900">Administrador</h3>
+                <h3 className="font-bold text-slate-900">Sou Administrador</h3>
                 <p className="text-xs text-slate-500">Gestão de eventos e emissão</p>
               </div>
               <ArrowRight className="ml-auto text-slate-300 group-hover:text-indigo-600" size={20}/>
-            </div>
-
-            <div 
-              onClick={() => setLoginMode('CPF')}
-              className="p-5 border border-slate-200 rounded-xl hover:border-green-500 hover:shadow-md hover:bg-green-50 cursor-pointer transition-all group flex items-center gap-4"
-            >
-              <div className="bg-green-100 p-3 rounded-lg group-hover:bg-green-600 group-hover:text-white transition-colors text-green-700">
-                <UserCircle size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-900">Participante / Aluno</h3>
-                <p className="text-xs text-slate-500">Baixar certificados via CPF</p>
-              </div>
-              <ArrowRight className="ml-auto text-slate-300 group-hover:text-green-600" size={20}/>
             </div>
           </div>
         )}
@@ -149,6 +180,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 <p className="text-sm text-slate-500">Informe seu documento para prosseguir</p>
              </div>
              
+             {error && (
+               <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg flex items-start gap-2 border border-red-100">
+                 <AlertCircle size={16} className="shrink-0 mt-0.5" /> 
+                 <span>{error}</span>
+               </div>
+             )}
+
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-1">CPF do Participante</label>
                <div className="relative">
@@ -158,7 +196,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                    className="w-full pl-10 p-3 border border-slate-300 rounded-lg font-mono text-lg tracking-wide focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all"
                    placeholder="000.000.000-00"
                    value={cpf}
-                   onChange={(e) => setCpf(formatCpfDisplay(e.target.value))}
+                   onChange={(e) => { setCpf(formatCpfDisplay(e.target.value)); setError(''); }}
                    maxLength={14}
                    autoFocus
                  />
@@ -171,7 +209,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
              
              <button 
                type="button" 
-               onClick={() => setLoginMode('SELECT')}
+               onClick={() => { setLoginMode('SELECT'); clearErrors(); }}
                className="w-full text-center text-sm text-slate-400 hover:text-slate-700 mt-2"
              >
                Voltar para seleção
@@ -203,7 +241,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                      className="w-full pl-10 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                      placeholder="admin@empresa.com"
                      value={email}
-                     onChange={(e) => setEmail(e.target.value)}
+                     onChange={(e) => { setEmail(e.target.value); setError(''); }}
                      autoFocus
                    />
                  </div>
@@ -218,7 +256,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                      className="w-full pl-10 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                      placeholder="••••••••"
                      value={password}
-                     onChange={(e) => setPassword(e.target.value)}
+                     onChange={(e) => { setPassword(e.target.value); setError(''); }}
                    />
                  </div>
                </div>
@@ -235,7 +273,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
              
              <button 
                type="button" 
-               onClick={() => { setLoginMode('SELECT'); setError(''); setEmail(''); setPassword(''); }}
+               onClick={() => { setLoginMode('SELECT'); clearErrors(); setEmail(''); setPassword(''); }}
                className="w-full text-center text-sm text-slate-400 hover:text-slate-700 mt-2"
              >
                Voltar para seleção

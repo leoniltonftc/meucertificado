@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, FileBadge, Search, LogOut, ShieldCheck, Palette, UserCog } from 'lucide-react';
+import { HashRouter, Routes, Route, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, Users, FileBadge, Search, LogOut, ShieldCheck, Palette, UserCog, Home as HomeIcon } from 'lucide-react';
 import { UserRole, User } from './types';
 
 // Pages
@@ -60,6 +60,9 @@ const Sidebar = ({ user, onLogout }: { user: User | null, onLogout: () => void }
         )}
         
         <div className="pt-4 mt-4 border-t border-indigo-800">
+           <Link to="/" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-indigo-100 hover:bg-indigo-800 hover:text-white`}>
+              <HomeIcon size={20} /> Site Inicial
+           </Link>
            <Link to="/validate" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/validate')}`}>
               <ShieldCheck size={20} /> Validar
             </Link>
@@ -75,8 +78,10 @@ const Sidebar = ({ user, onLogout }: { user: User | null, onLogout: () => void }
   );
 };
 
-export default function App() {
+// Inner component to use hooks like useNavigate
+const AppContent = () => {
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   // Simulate simple session persistence
   useEffect(() => {
@@ -94,32 +99,39 @@ export default function App() {
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('currentUser');
+    navigate('/'); // Redirect to home after logout
   };
 
   return (
+    <div className="min-h-screen bg-slate-50 flex">
+      {user && <Sidebar user={user} onLogout={handleLogout} />}
+      
+      <main className={`flex-1 ${user ? 'ml-64' : ''} transition-all duration-300`}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home user={user} />} />
+          <Route path="/login" element={user ? <Navigate to={user.role === UserRole.ADMIN ? "/admin" : "/my-certificates"} /> : <Login onLogin={handleLogin} />} />
+          <Route path="/validate" element={<Validator />} />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={user?.role === UserRole.ADMIN ? <AdminDashboard /> : <Navigate to="/login" />} />
+          <Route path="/admin/events" element={user?.role === UserRole.ADMIN ? <EventManager /> : <Navigate to="/login" />} />
+          <Route path="/admin/participants" element={user?.role === UserRole.ADMIN ? <ParticipantManager /> : <Navigate to="/login" />} />
+          <Route path="/admin/templates" element={user?.role === UserRole.ADMIN ? <TemplateManager /> : <Navigate to="/login" />} />
+          <Route path="/admin/users" element={user?.role === UserRole.ADMIN ? <AdminManager /> : <Navigate to="/login" />} />
+
+          {/* Participant Routes */}
+          <Route path="/my-certificates" element={user?.role === UserRole.PARTICIPANT ? <UserCertificates user={user} /> : <Navigate to="/login" />} />
+        </Routes>
+      </main>
+    </div>
+  );
+};
+
+export default function App() {
+  return (
     <HashRouter>
-      <div className="min-h-screen bg-slate-50 flex">
-        {user && <Sidebar user={user} onLogout={handleLogout} />}
-        
-        <main className={`flex-1 ${user ? 'ml-64' : ''} transition-all duration-300`}>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Home user={user} />} />
-            <Route path="/login" element={user ? <Navigate to={user.role === UserRole.ADMIN ? "/admin" : "/my-certificates"} /> : <Login onLogin={handleLogin} />} />
-            <Route path="/validate" element={<Validator />} />
-
-            {/* Admin Routes */}
-            <Route path="/admin" element={user?.role === UserRole.ADMIN ? <AdminDashboard /> : <Navigate to="/login" />} />
-            <Route path="/admin/events" element={user?.role === UserRole.ADMIN ? <EventManager /> : <Navigate to="/login" />} />
-            <Route path="/admin/participants" element={user?.role === UserRole.ADMIN ? <ParticipantManager /> : <Navigate to="/login" />} />
-            <Route path="/admin/templates" element={user?.role === UserRole.ADMIN ? <TemplateManager /> : <Navigate to="/login" />} />
-            <Route path="/admin/users" element={user?.role === UserRole.ADMIN ? <AdminManager /> : <Navigate to="/login" />} />
-
-            {/* Participant Routes */}
-            <Route path="/my-certificates" element={user?.role === UserRole.PARTICIPANT ? <UserCertificates user={user} /> : <Navigate to="/login" />} />
-          </Routes>
-        </main>
-      </div>
+      <AppContent />
     </HashRouter>
   );
 }
