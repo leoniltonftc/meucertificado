@@ -1,5 +1,5 @@
 {
-  "name": "CertificadoPro AI",
-  "description": "A comprehensive event and certificate management system powered by Gemini AI for automated content generation and data processing.",
+  "name": "CertificadoPro",
+  "description": "A comprehensive event and certificate management system for automated content generation and data processing.",
   "requestFramePermissions": []
 }

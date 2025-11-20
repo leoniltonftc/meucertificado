@@ -1,16 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Upload, FileUp, CheckCircle, Mail, Trash2, Edit, X, Save, AlertTriangle } from 'lucide-react';
+import { Upload, FileUp, CheckCircle, Mail, Trash2, Edit, X, Save, AlertTriangle, FileText } from 'lucide-react';
 import { Event, Participant } from '../types';
 import { Button } from '../components/Button';
-import { parseParticipantData } from '../services/geminiService';
 
 export default function ParticipantManager() {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string>('');
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [rawInput, setRawInput] = useState('');
-  const [isParsing, setIsParsing] = useState(false);
   const [importMode, setImportMode] = useState(false);
   
   // State for Editing
@@ -30,30 +28,43 @@ export default function ParticipantManager() {
     localStorage.setItem('participants', JSON.stringify(newList));
   };
 
-  const handleImport = async () => {
+  const handleImport = () => {
     if (!rawInput.trim()) return;
-    setIsParsing(true);
     
-    const parsed = await parseParticipantData(rawInput);
-    
-    if (parsed && parsed.length > 0) {
-      const newParticipants: Participant[] = parsed.map(p => ({
-        id: crypto.randomUUID(),
-        name: p.name,
-        email: p.email,
-        cpf: p.cpf || '',
-        eventId: selectedEventId,
-        attended: true, 
-      }));
+    // Manual CSV Parsing
+    // Expected format: Name, CPF, Email (per line)
+    const lines = rawInput.split('\n');
+    const newParticipants: Participant[] = [];
 
+    lines.forEach(line => {
+      if (!line.trim()) return;
+      
+      const parts = line.split(',').map(part => part.trim());
+      const name = parts[0];
+      const cpf = parts[1] || ''; // Allow empty if missing
+      const email = parts[2] || ''; // Allow empty if missing
+
+      if (name) {
+        newParticipants.push({
+          id: crypto.randomUUID(),
+          name: name,
+          cpf: cpf,
+          email: email,
+          eventId: selectedEventId,
+          attended: true, 
+        });
+      }
+    });
+    
+    if (newParticipants.length > 0) {
       const updated = [...participants, ...newParticipants];
       saveParticipants(updated);
       setImportMode(false);
       setRawInput('');
+      alert(`${newParticipants.length} participantes importados com sucesso.`);
     } else {
-      alert("Não foi possível identificar participantes. Verifique se o formato contém nomes e emails ou CPFs.");
+      alert("Não foi possível identificar participantes. Verifique o formato: Nome, CPF, Email");
     }
-    setIsParsing(false);
   };
 
   const issueCertificate = (p: Participant) => {
@@ -111,19 +122,21 @@ export default function ParticipantManager() {
       {importMode && (
         <div className="mb-8 bg-indigo-50 p-6 rounded-xl border border-indigo-100 animate-fade-in">
           <h3 className="font-semibold text-indigo-900 mb-2 flex items-center gap-2">
-             <Upload size={20} /> Importação Inteligente (Gemini AI)
+             <Upload size={20} /> Importação de Lista (Texto/CSV)
           </h3>
           <p className="text-sm text-indigo-700 mb-4">
-            Cole a lista de presença (texto bruto). A IA extrairá Nome, Email e CPF automaticamente.
+            Cole a lista de presença abaixo. Separe as informações por vírgula.
+            <br/>
+            <strong>Formato Padrão:</strong> Nome, CPF, Email
           </p>
           <textarea 
             className="w-full p-3 rounded-md border border-indigo-200 h-32 text-sm font-mono"
-            placeholder="Ex: João Silva, 123.456.789-00, joao@email.com"
+            placeholder="João da Silva, 123.456.789-00, joao@email.com&#10;Maria Oliveira, 987.654.321-11, maria@email.com"
             value={rawInput}
             onChange={e => setRawInput(e.target.value)}
           />
           <div className="flex justify-end mt-3">
-            <Button onClick={handleImport} isLoading={isParsing}>Processar e Adicionar</Button>
+            <Button onClick={handleImport}>Processar e Adicionar</Button>
           </div>
         </div>
       )}

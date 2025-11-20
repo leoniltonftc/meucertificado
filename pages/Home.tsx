@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, FileBadge, Zap, Users, ArrowRight, LayoutTemplate, CheckCircle } from 'lucide-react';
+import { ShieldCheck, FileBadge, Users, ArrowRight, LayoutTemplate, CheckCircle, FileText } from 'lucide-react';
 import { Button } from '../components/Button';
 import { User } from '../types';
 
@@ -17,7 +17,7 @@ export default function Home({ user }: HomeProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <div className="flex items-center gap-2 text-indigo-800 font-bold text-xl">
             <FileBadge className="w-8 h-8 text-indigo-600" />
-            CertificadoPro AI
+            CertificadoPro
           </div>
           <div className="flex items-center gap-4">
             <Link to="/validate" className="text-slate-600 hover:text-indigo-600 font-medium text-sm hidden md:block">
@@ -41,15 +41,15 @@ export default function Home({ user }: HomeProps) {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <span className="inline-block py-1 px-3 rounded-full bg-indigo-800 border border-indigo-700 text-indigo-300 text-xs font-bold tracking-wider uppercase mb-6 animate-fade-in">
-             Plataforma Inteligente de Gestão
+             Plataforma de Gestão
           </span>
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight">
             Gestão de Eventos e <br/>
             <span className="text-indigo-400">Certificados Simplificada</span>
           </h1>
           <p className="text-lg md:text-xl text-indigo-200 max-w-2xl mx-auto mb-10">
-            Automatize a emissão de certificados com Inteligência Artificial. 
-            Modelos personalizados, importação inteligente de listas e validação segura.
+            Emita certificados com rapidez e segurança. 
+            Modelos personalizados, importação fácil de listas e validação segura.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
              <Link to="/login">
@@ -77,11 +77,11 @@ export default function Home({ user }: HomeProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-md transition-all group">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 mb-4 group-hover:scale-110 transition-transform">
-                <Zap size={24} />
+                <FileText size={24} />
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-2">IA Generativa</h3>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">Emissão Rápida</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Utilize o Google Gemini para gerar textos formais, extrair dados de listas bagunçadas e preencher informações automaticamente.
+                Gere centenas de certificados em instantes a partir de listas de presença em texto ou CSV.
               </p>
             </div>
 
@@ -126,7 +126,7 @@ export default function Home({ user }: HomeProps) {
                         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">2</div>
                         <div>
                            <h4 className="font-bold text-slate-800">Importe Participantes</h4>
-                           <p className="text-sm text-slate-600">Cole sua lista do Excel ou Sheets. Nossa IA organiza os dados para você.</p>
+                           <p className="text-sm text-slate-600">Cole sua lista do Excel ou Sheets. O sistema organiza os dados para você.</p>
                         </div>
                      </div>
                      <div className="flex gap-4">
@@ -161,7 +161,7 @@ export default function Home({ user }: HomeProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <div className="flex items-center gap-2 text-white font-bold text-lg mb-4">
-              <FileBadge className="w-6 h-6" /> CertificadoPro AI
+              <FileBadge className="w-6 h-6" /> CertificadoPro
             </div>
             <p className="text-sm">
               Transformando a gestão acadêmica e corporativa com tecnologia de ponta.
@@ -177,7 +177,7 @@ export default function Home({ user }: HomeProps) {
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 text-center text-xs">
-           &copy; 2025 CertificadoPro AI. Todos os direitos reservados.
+           &copy; 2025 CertificadoPro. Todos os direitos reservados.
         </div>
       </footer>
     </div>
