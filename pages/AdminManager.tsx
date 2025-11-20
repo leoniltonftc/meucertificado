@@ -114,7 +114,7 @@ export default function AdminManager() {
         <div className="bg-white p-6 rounded-xl shadow-lg border border-indigo-100 max-w-2xl mx-auto mb-8 animate-fade-in">
           <div className="flex justify-between items-center mb-6 border-b pb-2">
               <h3 className="text-xl font-semibold text-indigo-900">{formData.id ? 'Editar Administrador' : 'Cadastrar Novo Administrador'}</h3>
-              <button onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-slate-600">
+              <button type="button" onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
                 <X size={24} />
               </button>
           </div>
@@ -198,15 +198,17 @@ export default function AdminManager() {
                 <td className="p-4 text-right">
                   <div className="flex justify-end gap-2">
                     <button 
-                        onClick={() => startEdit(admin)}
-                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); startEdit(admin); }}
+                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors cursor-pointer"
                         title="Editar"
                     >
                         <Edit size={16} />
                     </button>
                     <button 
-                        onClick={() => handleDelete(admin.id)}
-                        className={`p-2 rounded transition-colors ${admin.id === currentUser?.id ? 'text-slate-300 cursor-not-allowed' : 'text-slate-400 hover:text-red-600 hover:bg-red-50'}`}
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); handleDelete(admin.id); }}
+                        className={`p-2 rounded transition-colors cursor-pointer ${admin.id === currentUser?.id ? 'text-slate-300 cursor-not-allowed opacity-50' : 'text-slate-400 hover:text-red-600 hover:bg-red-50'}`}
                         title="Excluir"
                         disabled={admin.id === currentUser?.id}
                     >

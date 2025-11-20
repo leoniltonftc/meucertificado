@@ -185,7 +185,7 @@ export default function TemplateManager() {
                         <button 
                           type="button"
                           onClick={() => setCurrentTemplate({...currentTemplate, backgroundImage: ''})}
-                          className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                         >
                           <Trash2 size={14}/>
                         </button>
@@ -214,7 +214,7 @@ export default function TemplateManager() {
                         <button 
                           type="button"
                           onClick={() => setCurrentTemplate({...currentTemplate, backImage: ''})}
-                          className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                         >
                           <Trash2 size={14}/>
                         </button>
@@ -480,10 +480,10 @@ export default function TemplateManager() {
                  <span>Y Assinatura: {t.signatureTextY || 170}mm</span>
               </div>
               <div className="flex gap-2 justify-end">
-                <Button size="sm" variant="outline" onClick={() => { setCurrentTemplate(t); setIsEditing(true); }}>
+                <Button type="button" size="sm" variant="outline" onClick={() => { setCurrentTemplate(t); setIsEditing(true); }}>
                   <Edit size={16} /> Editar
                 </Button>
-                <Button size="sm" variant="danger" onClick={() => handleDelete(t.id)}>
+                <Button type="button" size="sm" variant="danger" onClick={() => handleDelete(t.id)}>
                   <Trash2 size={16} /> Excluir
                 </Button>
               </div>

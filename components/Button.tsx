@@ -30,9 +30,11 @@ export const Button: React.FC<ButtonProps> = ({
     lg: "px-6 py-3 text-base"
   };
 
+  const cursorClass = disabled || isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
+
   return (
     <button
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${isLoading || disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${cursorClass} ${className}`}
       disabled={disabled || isLoading}
       {...props}
     >

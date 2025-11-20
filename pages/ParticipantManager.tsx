@@ -495,18 +495,20 @@ export default function ParticipantManager() {
                     </span>
                   )}
                 </td>
-                <td className="p-4 text-right flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <td className="p-4 text-right flex justify-end gap-2">
                   <button 
-                    onClick={() => handleEditClick(p)}
-                    className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleEditClick(p); }}
+                    className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors cursor-pointer"
                     title="Editar"
                   >
                     <Edit size={16} />
                   </button>
                   
                   <button 
-                    onClick={() => handleDelete(p.id)}
-                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}
+                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
                     title="Excluir"
                   >
                     <Trash2 size={16} />

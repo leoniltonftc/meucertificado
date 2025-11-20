@@ -613,13 +613,13 @@ export default function EventManager() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="secondary" onClick={() => handleCopy(ev)} title="Duplicar Evento">
+                <Button type="button" size="sm" variant="secondary" onClick={() => handleCopy(ev)} title="Duplicar Evento">
                   <Copy size={16} />
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => { setCurrentEvent(ev); setIsEditing(true); }}>
+                <Button type="button" size="sm" variant="outline" onClick={() => { setCurrentEvent(ev); setIsEditing(true); }}>
                   <Edit size={16} />
                 </Button>
-                <Button size="sm" variant="danger" onClick={() => handleDelete(ev.id)}>
+                <Button type="button" size="sm" variant="danger" onClick={() => handleDelete(ev.id)}>
                   <Trash2 size={16} />
                 </Button>
               </div>
