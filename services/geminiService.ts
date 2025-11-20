@@ -1,10 +1,16 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
+
+// Declaração para evitar erros de TS no editor, já que o Vite fará a substituição
+declare const process: {
+  env: {
+    API_KEY: string;
+  };
+};
 
 const getAiClient = () => {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
-    console.error("API Key missing");
+    console.error("API Key missing. Certifique-se de configurar a variável de ambiente VITE_API_KEY ou API_KEY.");
     return null;
   }
   return new GoogleGenAI({ apiKey });
@@ -26,7 +32,7 @@ export const generateCertificateText = async (eventTitle: string, hours: number,
       O texto deve começar com "Certificamos que..." e ser um parágrafo único justificado.
       Inclua detalhes sobre "participou de 100% do evento", "realizado entre os dias...", etc.`,
     });
-    return response.text.trim();
+    return response.text ? response.text.trim() : "Erro ao gerar texto.";
   } catch (error) {
     console.error("Error generating text:", error);
     return "Certificamos que [NOME_DO_PARTICIPANTE], CPF [CPF], participou com êxito do evento.";
@@ -65,7 +71,9 @@ export const parseParticipantData = async (rawData: string): Promise<{ name: str
       }
     });
     
-    return JSON.parse(response.text);
+    const text = response.text;
+    if (!text) return [];
+    return JSON.parse(text);
   } catch (error) {
     console.error("Error parsing participants:", error);
     return [];
