@@ -51,7 +51,7 @@ const Sidebar = ({ user, onLogout, isOpen, onClose }: SidebarProps) => {
       )}
 
       <div className={`
-        fixed top-0 left-0 z-40 h-screen w-64 bg-indigo-900 text-white flex flex-col transition-transform duration-300 ease-in-out shadow-2xl
+        fixed inset-y-0 left-0 z-40 w-64 bg-indigo-900 text-white flex flex-col transition-transform duration-300 ease-in-out shadow-2xl
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
         md:translate-x-0
       `}>
@@ -75,9 +75,9 @@ const Sidebar = ({ user, onLogout, isOpen, onClose }: SidebarProps) => {
           {user.role === UserRole.ADMIN && (
             <>
               <LinkItem to="/admin" icon={LayoutDashboard} label="Dashboard" />
+              <LinkItem to="/admin/templates" icon={Palette} label="Modelos" />
               <LinkItem to="/admin/events" icon={FileBadge} label="Eventos" />
               <LinkItem to="/admin/participants" icon={Users} label="Participantes" />
-              <LinkItem to="/admin/templates" icon={Palette} label="Modelos" />
               <LinkItem to="/admin/users" icon={UserCog} label="Administradores" />
             </>
           )}
